@@ -365,7 +365,7 @@ resource "aws_api_gateway_integration" "presigned_url_upload_integration" {
   http_method = aws_api_gateway_method.presigned_url_upload_method.http_method
 
   integration_http_method = "POST"
-  type                    = "AWS"
+  type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.lambda_presignedUrlUpload_function.invoke_arn
 }
 
@@ -376,20 +376,6 @@ resource "aws_api_gateway_method_response" "presigned_url_upload_response_200" {
   status_code = "200"
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
-  }
-  depends_on = [
-    aws_api_gateway_integration.presigned_url_upload_integration
-  ]
-}
-
-resource "aws_api_gateway_integration_response" "presigned_url_upload_integration_response" {
-  rest_api_id = aws_api_gateway_rest_api.image_process.id
-  resource_id = aws_api_gateway_resource.presigned_url_upload_resource.id
-  http_method = aws_api_gateway_method.presigned_url_upload_method.http_method
-  status_code = aws_api_gateway_method_response.presigned_url_upload_response_200.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
   depends_on = [
     aws_api_gateway_integration.presigned_url_upload_integration
@@ -414,7 +400,6 @@ resource "aws_api_gateway_deployment" "presigned_url_download_deployment" {
     aws_api_gateway_integration_response.MyDemoIntegrationResponse,
     aws_api_gateway_integration_response.options_integration_response,
     aws_api_gateway_integration.presigned_url_upload_integration,
-    aws_api_gateway_integration_response.presigned_url_upload_integration_response,
     aws_api_gateway_integration.presigned_url_upload_options_integration,
     aws_api_gateway_integration_response.presigned_url_upload_options_integration_response
   ]

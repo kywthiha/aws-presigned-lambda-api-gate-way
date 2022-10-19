@@ -1,0 +1,31 @@
+{
+    "Comment": "A description of my state machine",
+    "StartAt": "ECS RunTask",
+    "States": {
+        "ECS RunTask": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::ecs:runTask",
+            "Parameters": {
+                "LaunchType": "FARGATE",
+                "Cluster": "arn:aws:ecs:us-east-1:100414139351:cluster/Step-Hello",
+                "TaskDefinition": "arn:aws:ecs:us-east-1:100414139351:task-definition/image-process-step-function-job-definition:1",
+                "Overrides": {
+                    "ContainerOverrides": [
+                        {
+                            "Name": "default",
+                            "Command.$": "$.commands"
+                        }
+                    ]
+                },
+                "NetworkConfiguration": {
+                    "AwsvpcConfiguration": {
+                        "Subnets": ["subnet-077105577efc49eae"],
+                        "SecurityGroups": ["sg-0ccc062d7d0b22320"],
+                        "AssignPublicIp": "ENABLED"
+                    }
+                }
+            },
+            "End": true
+        }
+    }
+}
